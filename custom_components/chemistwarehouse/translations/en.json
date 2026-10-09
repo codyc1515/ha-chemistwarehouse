@@ -1,0 +1,31 @@
+{
+  "title": "Chemist Warehouse",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect Chemist Warehouse",
+        "description": "Only prescriptions sent to Chemist Warehouse Online New Zealand (the online dispensary) are supported. Prescriptions sent to or held by local stores are not tracked.\n\nThis is an independent, unofficial integration, not affiliated with, supported by, endorsed by, or sponsored by Chemist Warehouse.\n\nEnter your Chemist Warehouse New Zealand account credentials. Prescription statuses are checked every 6 hours.",
+        "data": {
+          "username": "Username / email",
+          "password": "Password"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reconnect Chemist Warehouse",
+        "description": "Enter the updated password for this account.",
+        "data": {
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "The username or password was rejected.",
+      "cannot_connect": "Unable to connect to Chemist Warehouse. Try again later.",
+      "unexpected_page": "The website returned an unexpected page. Its layout may have changed or automated access may be blocked."
+    },
+    "abort": {
+      "already_configured": "This account is already configured.",
+      "reauth_successful": "The account was reconnected successfully."
+    }
+  }
+}

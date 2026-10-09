@@ -1,0 +1,12 @@
+{
+  "domain": "chemistwarehouse",
+  "name": "Chemist Warehouse",
+  "codeowners": ["@codyc1515"],
+  "config_flow": true,
+  "documentation": "https://github.com/codyc1515/ha-chemistwarehouse",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/codyc1515/ha-chemistwarehouse/issues",
+  "requirements": ["beautifulsoup4==4.14.3"],
+  "version": "0.1.0"
+}
