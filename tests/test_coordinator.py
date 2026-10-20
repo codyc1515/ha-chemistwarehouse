@@ -37,7 +37,7 @@ async def coordinator(tmp_path):
     coordinator.store = SimpleNamespace(
         async_load=AsyncMock(return_value=None), async_save=AsyncMock()
     )
-    await coordinator._async_setup()
+    await coordinator.async_load_inventory()
     yield coordinator
     await coordinator.async_shutdown()
 
@@ -60,7 +60,7 @@ async def test_medication_survives_disappearing_action_list_and_restart(
     restored.store = SimpleNamespace(
         async_load=AsyncMock(return_value=cached), async_save=AsyncMock()
     )
-    await restored._async_setup()
+    await restored.async_load_inventory()
     coordinator.client.async_tracking.return_value = parse_tracking(
         progress(pages["tracking"], 3), "1001"
     )

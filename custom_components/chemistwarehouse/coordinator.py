@@ -1,6 +1,8 @@
 """Shared polling and persistent medication discovery."""
 
 import logging
+from asyncio import CancelledError
+from contextlib import suppress
 from dataclasses import asdict
 from datetime import timedelta
 
@@ -33,9 +35,22 @@ class ChemistWarehouseCoordinator(DataUpdateCoordinator):
         self.inventory: dict[str, dict[str, dict]] = {}
         self.undiscovered_orders: tuple[str, ...] = ()
         self.repeats = ()
+        self.data = {}
+        self.last_update_success = False
+        self.initial_refresh_task = None
 
-    async def _async_setup(self):
+    async def async_load_inventory(self):
+        """Restore medication discovery without fetching remote calendar data."""
         self.inventory = await self.store.async_load() or {}
+
+    async def async_shutdown(self):
+        """Stop the initial refresh before its account session is closed."""
+        await super().async_shutdown()
+        if self.initial_refresh_task is not None:
+            self.initial_refresh_task.cancel()
+            with suppress(CancelledError):
+                await self.initial_refresh_task
+            self.initial_refresh_task = None
 
     async def _async_update_data(self):
         try:

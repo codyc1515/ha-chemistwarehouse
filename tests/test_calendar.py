@@ -151,7 +151,7 @@ async def test_upgrade_loads_only_calendar_and_removes_only_own_sensors():
     hass.config_entries.async_forward_entry_setups = AsyncMock()
     entry = Mock(entry_id="test", data={"username": "test", "password": "secret"})
     coordinator = Mock()
-    coordinator.async_config_entry_first_refresh = AsyncMock()
+    coordinator.async_load_inventory = AsyncMock()
     registry = Mock()
     registered = [
         SimpleNamespace(domain="sensor", platform="chemistwarehouse", entity_id="sensor.old"),

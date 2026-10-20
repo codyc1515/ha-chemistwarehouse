@@ -1,8 +1,10 @@
 """Chemist Warehouse prescription integration."""
 
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
+from homeassistant.core import callback
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
+from homeassistant.helpers.start import async_at_started
 from homeassistant.helpers.storage import Store
 
 from .client import ChemistWarehouseClient
@@ -18,7 +20,7 @@ async def async_setup_entry(hass, entry):
     client = ChemistWarehouseClient(session, entry.data[CONF_USERNAME], entry.data[CONF_PASSWORD])
     coordinator = ChemistWarehouseCoordinator(hass, entry, client)
     try:
-        await coordinator.async_config_entry_first_refresh()
+        await coordinator.async_load_inventory()
         entry.runtime_data = coordinator
         await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
         # The calendar replaces the medication sensors from earlier versions.
@@ -26,6 +28,14 @@ async def async_setup_entry(hass, entry):
         for entity in er.async_entries_for_config_entry(registry, entry.entry_id):
             if entity.domain == "sensor" and entity.platform == DOMAIN:
                 registry.async_remove(entity.entity_id)
+
+        @callback
+        def async_start_refresh(hass):
+            coordinator.initial_refresh_task = entry.async_create_background_task(
+                hass, coordinator.async_refresh(), f"{DOMAIN} initial refresh"
+            )
+
+        entry.async_on_unload(async_at_started(hass, async_start_refresh))
     except BaseException:
         await coordinator.async_shutdown()
         await session.close()
@@ -36,6 +46,7 @@ async def async_setup_entry(hass, entry):
 async def async_unload_entry(hass, entry):
     """Unload entities and release the authenticated session."""
     if unloaded := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
+        await entry.runtime_data.async_shutdown()
         await entry.runtime_data.client.session.close()
     return unloaded
 
