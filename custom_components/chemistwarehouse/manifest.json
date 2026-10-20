@@ -1,6 +1,6 @@
 {
   "domain": "chemistwarehouse",
-  "name": "Chemist Warehouse",
+  "name": "Chemist Warehouse Online",
   "codeowners": ["@codyc1515"],
   "config_flow": true,
   "documentation": "https://github.com/codyc1515/ha-chemistwarehouse",
